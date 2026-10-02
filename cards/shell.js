@@ -36,6 +36,13 @@
       });
       html+='<span class="badge">A</span>';
       rail.innerHTML=html;
+      // Moving between tools replaces the history entry, so one Back press from any tool
+      // always returns to the magazine instead of stepping through every tool visited.
+      rail.addEventListener('click',function(e){
+        var a=e.target.closest('a');
+        if(!a||e.defaultPrevented||e.button!==0||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey)return;
+        e.preventDefault();location.replace(a.href);
+      });
     }
     var t=document.createElement('div');t.id='toast';document.body.appendChild(t);
   });

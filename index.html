@@ -313,6 +313,18 @@
   }
   requestAnimationFrame(tick);
   var going=false;
+  // When the browser restores this page from its back/forward cache it is frozen in the
+  // zoomed, faded-to-white state. Reset it so the building shows again.
+  function resetScene(){
+    going=false;
+    document.body.classList.remove('going');
+    ['scene','m-scene'].forEach(function(id){document.getElementById(id).classList.remove('zoom','opening')});
+    document.getElementById('fade').classList.remove('on');
+    document.getElementById('banner').classList.add('show');
+  }
+  window.addEventListener('pageshow',function(e){
+    if(e.persisted||going){resetScene();var i=document.getElementById('intro');if(i)i.style.display='none'}
+  });
   function enter(){
     if(going) return; going=true;
     document.body.classList.add('going');
