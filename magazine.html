@@ -105,7 +105,7 @@
 <main class="hero" id="top">
   <section>
     <div id="now">Now showing</div>
-    <h1>Wall <span>Magazine</span><i class="arrow-i">&#8599;</i></h1>
+    <h1 id="title"></h1>
     <p id="desc"></p>
     <a id="open" class="pill" href="#">Open app <i>&rarr;</i></a>
   </section>
@@ -176,7 +176,7 @@
     layer.appendChild(c);return c;
   });
 
-  var preview=document.getElementById('preview'),desc=document.getElementById('desc'),openBtn=document.getElementById('open');
+  var title=document.getElementById('title'),preview=document.getElementById('preview'),desc=document.getElementById('desc'),openBtn=document.getElementById('open');
   function setLink(el,a){
     if(a.soon){el.removeAttribute('href');el.setAttribute('aria-disabled','true')}
     else{el.setAttribute('href',encodeURI(a.url));el.removeAttribute('aria-disabled')}
@@ -185,6 +185,8 @@
     var a=apps[active];
     preview.innerHTML=artSVG(a)+'<div class="emblem">'+(a.soon?'&#128274;':a.emblem)+'</div>'+(a.soon?'':'<span class="open-ic">&#8599;</span>')+
       '<div class="meta"><b>'+a.title+'</b><small>'+a.category+'</small></div>';
+    var w=a.title.split(' '), last=w.pop();
+    title.textContent=w.length?w.join(' ')+' ':''; var sp=document.createElement('span'); sp.textContent=last; title.appendChild(sp);
     desc.textContent=a.description; setLink(preview,a); setLink(openBtn,a);
     layout();
   }
