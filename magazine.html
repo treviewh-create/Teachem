@@ -1,216 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wall Magazine - A Lab</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg1:#1b0f24;--bg2:#4a2147;--pink:#ff6fa8;--pink2:#c94b8a;--text:#fff;--muted:#e2c9e6}
+  *{box-sizing:border-box}
+  html,body{margin:0;min-height:100%;font-family:'Poppins',system-ui,sans-serif;color:var(--text);background:var(--bg1)}
+  body{min-height:100vh;overflow-x:hidden;position:relative;display:flex;flex-direction:column;
+    background:linear-gradient(160deg,var(--bg1),var(--bg2) 70%,#6a2a56)}
+  #bg{position:fixed;inset:0;width:100%;height:100%;z-index:0;opacity:.55;pointer-events:none}
+  #intro-fade{position:fixed;inset:0;background:#fff;z-index:50;pointer-events:none;animation:out 1s ease .1s forwards}
+  @keyframes out{to{opacity:0}}
+  header,main{position:relative;z-index:2}
+  nav{display:flex;align-items:center;gap:14px;margin:18px auto 0;width:max-content;max-width:calc(100% - 24px);
+    padding:8px 12px 8px 8px;border-radius:999px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);
+    backdrop-filter:blur(8px)}
+  .brand{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:15px;
+    background:linear-gradient(135deg,var(--pink),#7a4bff);flex:none}
+  nav a,nav button{color:var(--text);font:500 13px 'Poppins',sans-serif;text-decoration:none;background:none;border:0;
+    cursor:pointer;padding:6px 10px;border-radius:999px}
+  nav a:hover,nav button:hover{background:rgba(255,255,255,.14)}
+  .hero{display:grid;grid-template-columns:1.1fr .9fr;align-items:center;gap:24px;width:min(1100px,92%);margin:22px auto 0}
+  h1{margin:0;font-size:clamp(34px,6vw,60px);line-height:1.05;font-weight:700}
+  h1 span{display:inline-block;background:linear-gradient(90deg,#ff9bc6,var(--pink2));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .arrow-i{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:9px;background:rgba(255,255,255,.18);
+    font-size:16px;margin-left:8px;vertical-align:middle;-webkit-text-fill-color:#fff}
+  #desc{color:var(--muted);font-size:13px;line-height:1.7;max-width:46ch;margin:16px 0 20px;min-height:5.2em}
+  #now{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--pink);margin-bottom:8px;font-weight:600}
+  .pill{display:inline-flex;align-items:center;gap:10px;padding:8px 10px 8px 22px;border-radius:999px;cursor:pointer;
+    background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.28);color:#fff;font:500 14px 'Poppins',sans-serif;
+    text-decoration:none;transition:background .2s,transform .2s}
+  .pill:hover{background:rgba(255,255,255,.2);transform:translateY(-2px)}
+  .pill i{width:30px;height:30px;border-radius:50%;background:#fff;color:#4a2147;display:grid;place-items:center;font-style:normal;font-weight:700}
+  .pill[aria-disabled=true]{opacity:.45;pointer-events:none}
+  .preview-wrap{display:flex;flex-direction:column;align-items:center;gap:14px}
+  #preview{position:relative;width:clamp(190px,24vw,260px);aspect-ratio:3/4;border-radius:34px;overflow:hidden;cursor:pointer;
+    border:1px solid rgba(255,255,255,.25);box-shadow:0 24px 60px rgba(0,0,0,.45),0 0 0 6px rgba(255,255,255,.05);
+    transition:transform .3s;display:block;color:#fff;text-decoration:none}
+  #preview:hover{transform:translateY(-4px) scale(1.02)}
+  #preview svg.art{position:absolute;inset:0;width:100%;height:100%}
+  .emblem{position:absolute;inset:0;display:grid;place-items:center;font-weight:700;font-size:clamp(26px,3.4vw,40px);
+    text-shadow:0 4px 18px rgba(0,0,0,.35);text-align:center;padding:10px}
+  .open-ic{position:absolute;top:14px;right:14px;width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.9);
+    color:#4a2147;display:grid;place-items:center;font-weight:700;font-size:16px}
+  .meta{position:absolute;left:0;right:0;bottom:0;padding:34px 16px 16px;background:linear-gradient(transparent,rgba(20,8,28,.75));font-size:13px}
+  .meta b{display:block;font-size:16px}
+  .meta small{color:var(--muted)}
+  #stage{position:relative;z-index:2;height:330px;margin-top:auto;overflow:hidden;touch-action:pan-y;user-select:none}
+  .disc,.ring{position:absolute;border-radius:50%;left:0;top:0;pointer-events:none}
+  .disc{background:radial-gradient(circle at 50% 0%,#ff8ab8 0%,#e0529a 45%,#8a2f73 100%);
+    box-shadow:0 -10px 60px rgba(255,111,168,.45),inset 0 8px 30px rgba(255,255,255,.25);transition:none}
+  .ring{border:1.5px solid rgba(255,255,255,.28)}
+  .card{position:absolute;left:0;top:0;border-radius:22px;overflow:hidden;cursor:pointer;border:2px solid rgba(255,255,255,.55);
+    box-shadow:0 10px 30px rgba(40,10,50,.4);transition:transform .7s cubic-bezier(.3,.8,.2,1),opacity .5s;background:#333;padding:0;color:#fff}
+  .card svg.art{position:absolute;inset:0;width:100%;height:100%}
+  .card .emblem{font-size:15px}
+  .card .lbl{position:absolute;left:0;right:0;bottom:0;padding:16px 8px 8px;font:600 11px 'Poppins',sans-serif;text-align:center;
+    background:linear-gradient(transparent,rgba(20,8,28,.7))}
+  .card.soon{filter:saturate(.35) brightness(.8)}
+  .card.active{border-color:#fff;box-shadow:0 14px 40px rgba(40,10,50,.55),0 0 0 4px rgba(255,255,255,.35)}
+  .nav-btn{position:absolute;bottom:14px;z-index:200;width:44px;height:44px;border-radius:50%;border:1px solid rgba(255,255,255,.45);
+    background:rgba(40,10,50,.45);color:#fff;font-size:18px;cursor:pointer;backdrop-filter:blur(6px)}
+  .nav-btn:hover{background:rgba(40,10,50,.7)}
+  #prev{left:max(12px,calc(50% - 360px))}#next{right:max(12px,calc(50% - 360px))}
+  #viewall{position:absolute;left:50%;top:-6px;transform:translateX(-50%);z-index:200}
+  .badge{position:absolute;left:50%;bottom:6px;transform:translateX(-50%);width:64px;height:64px;border-radius:50%;z-index:200;pointer-events:none;
+    background:linear-gradient(135deg,#3b5bdb,#7a4bff);border:5px solid rgba(255,255,255,.85);display:grid;place-items:center;
+    font-weight:700;font-size:20px;box-shadow:0 10px 26px rgba(0,0,0,.4)}
+  dialog{border:0;border-radius:24px;padding:0;max-width:min(920px,94vw);width:100%;background:linear-gradient(160deg,#2a1432,#4a2147);color:#fff;
+    box-shadow:0 30px 80px rgba(0,0,0,.6)}
+  dialog::backdrop{background:rgba(10,4,16,.7);backdrop-filter:blur(4px)}
+  .dlg{padding:22px}.dlg h2{margin:0 0 14px;font-size:20px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
+  .grid a{position:relative;aspect-ratio:3/4;border-radius:20px;overflow:hidden;color:#fff;text-decoration:none;border:1px solid rgba(255,255,255,.3)}
+  .grid a svg.art{position:absolute;inset:0;width:100%;height:100%}
+  .x{float:right;background:rgba(255,255,255,.12);border:0;color:#fff;width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:16px}
+  @media (max-width:760px){
+    .hero{grid-template-columns:1fr;text-align:left;margin-top:18px}
+    .preview-wrap{order:2}
+    #desc{min-height:0;margin:10px 0 14px;font-size:12px}
+    #preview{width:min(62vw,250px)}
+    #stage{height:300px}
+    #prev{left:10px}#next{right:10px}
+  }
+</style>
+</head>
+<body>
+<div id="intro-fade"></div>
+<svg id="bg" preserveAspectRatio="xMidYMid slice" viewBox="0 0 1600 900"></svg>
 
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Wall Magazine - Dad's Innovations</title>
-        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-        <style>
-            /* CSS Color and Font Variables */
-            :root {
-                --bg-dark-blue: #4a4a7c;
-                --sidebar-highlight: #5e5e94;
-                --card-bg: #6a6a9f;
-                --text-primary: #ffffff;
-                --text-secondary: #d1d1e0;
-                --accent-gold: #e6c86e;
-            }
-            /* General Body Styling */
-            body {
-                font-family: 'Poppins', sans-serif;
-                margin: 0;
-                padding: 0;
-                background-color: var(--bg-dark-blue);
-                color: var(--text-primary);
-            }
-            .page-container {
-                display: flex;
-                min-height: 100vh;
-                border-right: 8px solid var(--accent-gold);
-            }
-            .sidebar {
-                flex: 0 0 260px;
-                padding: 2.5rem 2rem;
-            }
-            .sidebar h2 {
-                font-weight: 700;
-                font-size: 0.9rem;
-                letter-spacing: 1px;
-                text-transform: uppercase;
-                color: var(--text-secondary);
-                margin-bottom: 2rem;
-            }
-            .category-list {
-                list-style: none;
-                padding: 0;
-                margin: 0;
-            }
-            .category-list li {
-                margin-bottom: 1.5rem;
-            }
-            .category-list a {
-                text-decoration: none;
-                color: var(--text-primary);
-                font-weight: 500;
-                font-size: 1rem;
-                transition: color 0.3s ease;
-            }
-            .category-list a:hover {
-                color: var(--accent-gold);
-            }
-            .free-delivery-box {
-                background-color: var(--sidebar-highlight);
-                padding: 1.5rem;
-                border-radius: 8px;
-                margin-top: 3rem;
-            }
-            .free-delivery-box h3 {
-                margin: 0 0 0.5rem 0;
-                font-weight: 600;
-            }
-            .free-delivery-box p {
-                margin: 0;
-                color: var(--text-secondary);
-                font-size: 0.9rem;
-            }
-            .main-content {
-                flex-grow: 1;
-                padding: 2.5rem 3rem;
-            }
-            .content-header {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: 2rem;
-            }
-            .content-header .title {
-                font-size: 2.5rem;
-                font-weight: 700;
-                text-transform: uppercase;
-                letter-spacing: 2px;
-            }
-            .content-header .filters {
-                display: flex;
-                gap: 2rem;
-                color: var(--text-secondary);
-            }
-            #cards-container {
-                display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-                gap: 2rem;
-            }
-            .card {
-                background-color: var(--card-bg);
-                border-radius: 8px;
-                overflow: hidden;
-                text-decoration: none;
-                color: var(--text-primary);
-                display: flex;
-                flex-direction: column;
-                transition: transform 0.3s ease;
-            }
-            .card:hover {
-                transform: translateY(-5px);
-            }
-            .card-content {
-                padding: 1.5rem;
-                flex-grow: 1;
-                display: flex;
-                flex-direction: column;
-            }
-            .card-title {
-                font-size: 1.25rem;
-                font-weight: 600;
-                margin: 0 0 0.5rem 0;
-            }
-            .card-description {
-                font-size: 0.9rem;
-                color: var(--text-secondary);
-                margin: 0;
-                flex-grow: 1;
-                margin-bottom: 1rem;
-            }
-            .card-footer {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-top: 1rem;
-            }
-            .card-category {
-                font-size: 0.8rem;
-                font-weight: 600;
-                letter-spacing: 1px;
-                text-transform: uppercase;
-            }
-            .card-price {
-                font-size: 1.25rem;
-                font-weight: 600;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="page-container">
-            <aside class="sidebar">
-                <h2>Innovations</h2>
-                <p><a href="index.html" style="color:#e6c86e;text-decoration:none">&larr; Back to campus</a></p>
-                <ul class="category-list">
-                    <li><a href="#">All</a></li>
-                    <li><a href="#">Recent</a></li>
-                    <li><a href="#">Prototypes</a></li>
-                    <li><a href="#">In-progress</a></li>
-                    <li><a href="#">Completed</a></li>
-                </ul>
-                <div class="free-delivery-box">
-                    <h3>About This Site</h3>
-                    <p>A place to showcase new ideas, inventions, and projects.</p>
-                </div>
-            </aside>
-            <main class="main-content">
-                <header class="content-header">
-                    <span class="title">Wall Magazine</span>
-                    <nav class="filters">
-                        <span>Sorting</span>
-                        <span>Recent ⌄</span>
-                        <span>Category ⌄</span>
-                    </nav>
-                </header>
-                <div id="cards-container">
-                    
-            <a href="cards/Calculator.html" class="card">
-                <div class="card-content">
-                    <h3 class="card-title">Calculator</h3>
-                    <p>Click to learn more about this innovation.</p>
-                </div>
-            </a>
-        
+<header>
+  <nav>
+    <span class="brand">A</span>
+    <a href="index.html">Home</a>
+    <a href="#stage">Apps</a>
+    <button id="about-btn" type="button">About</button>
+  </nav>
+</header>
 
-            <a href="cards/Delphy%20Calculator.html" class="card">
-                <div class="card-content">
-                    <h3 class="card-title">Delphy Calculator</h3>
-                    <p>Click to learn more about this innovation.</p>
-                </div>
-            </a>
-        
+<main class="hero" id="top">
+  <section>
+    <div id="now">Now showing</div>
+    <h1>Wall <span>Magazine</span><i class="arrow-i">&#8599;</i></h1>
+    <p id="desc"></p>
+    <a id="open" class="pill" href="#">Open app <i>&rarr;</i></a>
+  </section>
+  <section class="preview-wrap">
+    <a id="preview" href="#" aria-label="Open app"></a>
+  </section>
+</main>
 
-            <a href="cards/Linear%20Calculator.html" class="card">
-                <div class="card-content">
-                    <h3 class="card-title">Linear Calculator</h3>
-                    <p>Click to learn more about this innovation.</p>
-                </div>
-            </a>
-        
+<div id="stage" aria-label="App disc">
+  <button id="viewall" class="pill" type="button">View all <i>&#9662;</i></button>
+  <div id="disc-layer"></div>
+  <button id="prev" class="nav-btn" type="button" aria-label="Previous app">&#8249;</button>
+  <button id="next" class="nav-btn" type="button" aria-label="Next app">&#8250;</button>
+  <div class="badge">A</div>
+</div>
 
-            <a href="cards/Menghitung_Perbandingan_Atribut.html" class="card">
-                <div class="card-content">
-                    <h3 class="card-title">Menghitung Perbandingan Atribut</h3>
-                    <p>Click to learn more about this innovation.</p>
-                </div>
-            </a>
-        
-                </div>
-            </main>
-        </div>
-    </body>
-    </html>
-  
+<dialog id="all"><div class="dlg"><button class="x" id="all-x" aria-label="Close">&#10005;</button><h2>All innovations</h2><div class="grid" id="grid"></div></div></dialog>
+<dialog id="about"><div class="dlg"><button class="x" id="about-x" aria-label="Close">&#10005;</button><h2>About A Lab</h2>
+  <p style="line-height:1.7;color:#e2c9e6;margin:0">A Lab is the workshop of Anang. Every application he publishes lands on the disc below, so this wall keeps growing.</p></div></dialog>
+
+<script src="apps.js"></script>
+<script>
+(function(){
+  var NS='http://www.w3.org/2000/svg';
+  // ---------- low-poly artwork generator (deterministic) ----------
+  function rng(seed){var s=seed>>>0||1;return function(){s=(s*1664525+1013904223)>>>0;return s/4294967296}}
+  function hex(c){return [1,3,5].map(function(i){return parseInt(c.substr(i,2),16)})}
+  function mix(a,b,t){var A=hex(a),B=hex(b);return 'rgb('+A.map(function(v,i){return Math.round(v+(B[i]-v)*t)}).join(',')+')'}
+  function lowpoly(w,h,cols,rows,c1,c2,seed,vertical){
+    var r=rng(seed),pts=[],i,j,out='';
+    for(j=0;j<=rows;j++){pts[j]=[];for(i=0;i<=cols;i++){
+      var x=i*w/cols,y=j*h/rows;
+      if(i>0&&i<cols)x+=(r()-.5)*w/cols*.7; if(j>0&&j<rows)y+=(r()-.5)*h/rows*.7; pts[j][i]=[x,y]}}
+    function col(a,b,c){
+      var cx=(a[0]+b[0]+c[0])/3,cy=(a[1]+b[1]+c[1])/3;
+      var t=(vertical?cy/h:(cx/w*.5+cy/h*.5))+(r()-.5)*.22; return mix(c1,c2,Math.max(0,Math.min(1,t)))}
+    function tri(a,b,c){var f=col(a,b,c);out+='<polygon points="'+a+' '+b+' '+c+'" fill="'+f+'" stroke="'+f+'" stroke-width=".6"/>'}
+    for(j=0;j<rows;j++)for(i=0;i<cols;i++){
+      var a=pts[j][i],b=pts[j][i+1],c=pts[j+1][i],d=pts[j+1][i+1];
+      if(r()>.5){tri(a,b,c);tri(b,d,c)}else{tri(a,b,d);tri(a,d,c)}}
+    return out;
+  }
+  function hash(str){var h=7;for(var i=0;i<str.length;i++)h=(h*31+str.charCodeAt(i))>>>0;return h}
+  function artSVG(app){
+    var p=app.palette||['#ff7a59','#7a2c6e'];
+    return '<svg class="art" viewBox="0 0 300 400" preserveAspectRatio="xMidYMid slice">'+lowpoly(300,400,6,8,p[0],p[1],hash(app.id),true)+'</svg>';
+  }
+  // background
+  var bg=document.getElementById('bg');
+  bg.innerHTML=lowpoly(1600,900,16,9,'#2a1634','#6a2a56',11,false);
+
+  // ---------- data (+ "coming soon" slots so the disc always looks full) ----------
+  var apps=(window.APPS||[]).slice(), MIN=7, k=1;
+  while(apps.length<MIN){apps.push({id:'soon'+k,title:'Coming soon',category:'Next innovation',soon:true,
+    description:'The next innovation from the lab will appear here. Check back soon.',emblem:'?',palette:['#7b6a8f','#3a2a50']});k++}
+  var n=apps.length, active=0;
+
+  // ---------- elements ----------
+  var stage=document.getElementById('stage'), layer=document.getElementById('disc-layer');
+  var disc=document.createElement('div'),ring1=document.createElement('div'),ring2=document.createElement('div');
+  disc.className='disc';ring1.className='ring';ring2.className='ring';
+  layer.appendChild(disc);layer.appendChild(ring1);layer.appendChild(ring2);
+  var cards=apps.map(function(a,idx){
+    var c=document.createElement('button');c.type='button';c.className='card'+(a.soon?' soon':'');
+    c.setAttribute('aria-label',a.title);
+    c.innerHTML=artSVG(a)+'<div class="emblem">'+(a.soon?'&#128274;':a.emblem)+'</div><div class="lbl">'+a.title+'</div>';
+    c.addEventListener('click',function(){ if(c.dataset.drag==='1')return; active=idx; render() });
+    layer.appendChild(c);return c;
+  });
+
+  var preview=document.getElementById('preview'),desc=document.getElementById('desc'),openBtn=document.getElementById('open');
+  function setLink(el,a){
+    if(a.soon){el.removeAttribute('href');el.setAttribute('aria-disabled','true')}
+    else{el.setAttribute('href',encodeURI(a.url));el.removeAttribute('aria-disabled')}
+  }
+  function render(){
+    var a=apps[active];
+    preview.innerHTML=artSVG(a)+'<div class="emblem">'+(a.soon?'&#128274;':a.emblem)+'</div>'+(a.soon?'':'<span class="open-ic">&#8599;</span>')+
+      '<div class="meta"><b>'+a.title+'</b><small>'+a.category+'</small></div>';
+    desc.textContent=a.description; setLink(preview,a); setLink(openBtn,a);
+    layout();
+  }
+
+  // ---------- disc geometry ----------
+  function layout(){
+    var W=stage.clientWidth,H=stage.clientHeight, mobile=W<760;
+    var cw=mobile?104:140, ch=cw*1.25, R=Math.max(W*(mobile?1.0:.62),mobile?360:520);
+    var top=mobile?58:62, cx=W/2, cy=top+ch/2+R;
+    var step=(cw*1.12)/R;
+    function place(el,size){el.style.width=el.style.height=size+'px';el.style.left=(cx-size/2)+'px';el.style.top=(cy-size/2)+'px'}
+    place(disc,2*(R+ch/2+16)); place(ring1,2*(R-ch/2-18)); place(ring2,2*(R-ch/2-46));
+    cards.forEach(function(c,i){
+      var off=((i-active)%n+n)%n; if(off>n/2) off-=n;
+      var ang=off*step, x=cx+R*Math.sin(ang), y=cy-R*Math.cos(ang);
+      c.style.width=cw+'px'; c.style.height=ch+'px';
+      c.style.transform='translate('+(x-cw/2)+'px,'+(y-ch/2)+'px) rotate('+ang+'rad)';
+      var vis=Math.abs(off)<=(mobile?2:3);
+      c.style.opacity=vis?1:0; c.style.pointerEvents=vis?'auto':'none';
+      c.style.zIndex=100-Math.abs(off); c.classList.toggle('active',off===0);
+    });
+  }
+  window.addEventListener('resize',layout);
+
+  function go(d){active=((active+d)%n+n)%n;render()}
+  document.getElementById('prev').addEventListener('click',function(){go(-1)});
+  document.getElementById('next').addEventListener('click',function(){go(1)});
+  document.addEventListener('keydown',function(e){if(e.key==='ArrowLeft')go(-1);if(e.key==='ArrowRight')go(1)});
+  // swipe / drag the disc
+  var sx=null,moved=false;
+  stage.addEventListener('pointerdown',function(e){sx=e.clientX;moved=false});
+  window.addEventListener('pointermove',function(e){if(sx!==null&&Math.abs(e.clientX-sx)>8)moved=true});
+  window.addEventListener('pointerup',function(e){
+    if(sx===null)return; var dx=e.clientX-sx; sx=null;
+    if(Math.abs(dx)>40){ cards.forEach(function(c){c.dataset.drag='1'}); setTimeout(function(){cards.forEach(function(c){c.dataset.drag='0'})},50); go(dx<0?1:-1) }
+  });
+
+  // ---------- View all + About ----------
+  var all=document.getElementById('all'),grid=document.getElementById('grid');
+  grid.innerHTML=apps.filter(function(a){return !a.soon}).map(function(a){
+    return '<a href="'+encodeURI(a.url)+'">'+artSVG(a)+'<div class="emblem" style="font-size:22px">'+a.emblem+'</div><div class="meta"><b>'+a.title+'</b><small>'+a.category+'</small></div></a>'}).join('');
+  document.getElementById('viewall').addEventListener('click',function(){all.showModal()});
+  document.getElementById('all-x').addEventListener('click',function(){all.close()});
+  var about=document.getElementById('about');
+  document.getElementById('about-btn').addEventListener('click',function(){about.showModal()});
+  document.getElementById('about-x').addEventListener('click',function(){about.close()});
+  [all,about].forEach(function(d){d.addEventListener('click',function(e){if(e.target===d)d.close()})});
+
+  render();
+})();
+</script>
+</body>
+</html>
