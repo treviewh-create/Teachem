@@ -33,6 +33,7 @@ body{font-family:'Poppins',system-ui,sans-serif;color:var(--text);min-height:100
 .cols{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:22px;align-items:start}
 .card{background:var(--panel2);border-radius:24px;padding:22px;border:1px solid rgba(255,255,255,.05)}
 .card+.card{margin-top:22px}
+.cols>.card{margin-top:0}
 .card h3{margin:0 0 4px;font-size:16px}
 .card .sub{margin:0 0 16px;color:var(--muted);font-size:12.5px;line-height:1.5}
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:22px}
