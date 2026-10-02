@@ -19,7 +19,7 @@ window.APPS = [
     category: 'Tools',
     description: 'A clean everyday calculator for quick sums. Add, subtract, multiply and divide in one tap.',
     url: 'cards/Calculator.html',
-    palette: ['#ff7a59', '#7a2c6e'],
+    palette: ['#f6a56e', '#c4623a'],
     emblem: '+ − × ÷'
   },
   {
@@ -28,7 +28,7 @@ window.APPS = [
     category: 'Research',
     description: 'A flexible Delphi-method tool. Add criteria and panelists, enter their probabilities and get the estimate.',
     url: 'cards/Delphy Calculator.html',
-    palette: ['#6fd3c8', '#3b2a7a'],
+    palette: ['#6fe0ea', '#168a9b'],
     emblem: 'Δ'
   },
   {
@@ -37,7 +37,7 @@ window.APPS = [
     category: 'Mathematics',
     description: 'Maximise Z = Px + Qy under your own constraints. See the corner points and the feasible region plotted.',
     url: 'cards/Linear Calculator.html',
-    palette: ['#ffd36b', '#b03a6c'],
+    palette: ['#7ac3e6', '#2f86b8'],
     emblem: 'Z=Px+Qy'
   },
   {
@@ -46,7 +46,7 @@ window.APPS = [
     category: 'Decision making',
     description: 'Compare attributes in pairs and let the tool rank them and work out the weights for a management decision.',
     url: 'cards/Menghitung_Perbandingan_Atribut.html',
-    palette: ['#9b8cff', '#2c5a8a'],
+    palette: ['#f26d5a', '#c63b2d'],
     emblem: 'P / X'
   }
 ];

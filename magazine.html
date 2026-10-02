@@ -6,84 +6,85 @@
 <title>Wall Magazine - A Lab</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root{--bg1:#1b0f24;--bg2:#4a2147;--pink:#ff6fa8;--pink2:#c94b8a;--text:#fff;--muted:#e2c9e6}
+  :root{--bg1:#9fd3ea;--bg2:#dff2f8;--pink:#e2503f;--pink2:#e68a56;--teal:#27b8c9;--teal2:#168a9b;--text:#1f3a4d;--muted:#46667a}
   *{box-sizing:border-box}
   html,body{margin:0;min-height:100%;font-family:'Poppins',system-ui,sans-serif;color:var(--text);background:var(--bg1)}
   body{min-height:100vh;overflow-x:hidden;position:relative;display:flex;flex-direction:column;
-    background:linear-gradient(160deg,var(--bg1),var(--bg2) 70%,#6a2a56)}
-  #bg{position:fixed;inset:0;width:100%;height:100%;z-index:0;opacity:.55;pointer-events:none}
+    background:linear-gradient(180deg,var(--bg1),var(--bg2) 75%)}
+  #bg{position:fixed;inset:0;width:100%;height:100%;z-index:0;opacity:.5;pointer-events:none}
   #intro-fade{position:fixed;inset:0;background:#fff;z-index:50;pointer-events:none;animation:out 1s ease .1s forwards}
   @keyframes out{to{opacity:0}}
   header,main{position:relative;z-index:2}
   nav{display:flex;align-items:center;gap:14px;margin:18px auto 0;width:max-content;max-width:calc(100% - 24px);
-    padding:8px 12px 8px 8px;border-radius:999px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);
-    backdrop-filter:blur(8px)}
+    padding:8px 12px 8px 8px;border-radius:999px;background:rgba(255,255,255,.65);border:1px solid rgba(255,255,255,.9);
+    backdrop-filter:blur(8px);box-shadow:0 6px 20px rgba(31,58,77,.12)}
   .brand{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:15px;
-    background:linear-gradient(135deg,var(--pink),#7a4bff);flex:none}
+    background:linear-gradient(135deg,var(--teal),var(--teal2));color:#fff;flex:none}
   nav a,nav button{color:var(--text);font:500 13px 'Poppins',sans-serif;text-decoration:none;background:none;border:0;
     cursor:pointer;padding:6px 10px;border-radius:999px}
-  nav a:hover,nav button:hover{background:rgba(255,255,255,.14)}
+  nav a:hover,nav button:hover{background:rgba(39,184,201,.18)}
   .hero{display:grid;grid-template-columns:1.1fr .9fr;align-items:center;gap:24px;width:min(1100px,92%);margin:22px auto 0}
   h1{margin:0;font-size:clamp(34px,6vw,60px);line-height:1.05;font-weight:700}
-  h1 span{display:inline-block;background:linear-gradient(90deg,#ff9bc6,var(--pink2));-webkit-background-clip:text;background-clip:text;color:transparent}
-  .arrow-i{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:9px;background:rgba(255,255,255,.18);
+  h1 span{display:inline-block;background:linear-gradient(90deg,var(--pink2),var(--pink));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .arrow-i{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:9px;background:var(--teal);
     font-size:16px;margin-left:8px;vertical-align:middle;-webkit-text-fill-color:#fff}
   #desc{color:var(--muted);font-size:13px;line-height:1.7;max-width:46ch;margin:16px 0 20px;min-height:5.2em}
-  #now{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--pink);margin-bottom:8px;font-weight:600}
+  #now{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--teal2);margin-bottom:8px;font-weight:600}
   .pill{display:inline-flex;align-items:center;gap:10px;padding:8px 10px 8px 22px;border-radius:999px;cursor:pointer;
-    background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.28);color:#fff;font:500 14px 'Poppins',sans-serif;
+    background:#fff;border:1px solid rgba(31,58,77,.12);color:var(--text);font:600 14px 'Poppins',sans-serif;box-shadow:0 6px 18px rgba(31,58,77,.16);
     text-decoration:none;transition:background .2s,transform .2s}
-  .pill:hover{background:rgba(255,255,255,.2);transform:translateY(-2px)}
-  .pill i{width:30px;height:30px;border-radius:50%;background:#fff;color:#4a2147;display:grid;place-items:center;font-style:normal;font-weight:700}
+  .pill:hover{background:#f1fbfd;transform:translateY(-2px)}
+  .pill i{width:30px;height:30px;border-radius:50%;background:var(--teal);color:#fff;display:grid;place-items:center;font-style:normal;font-weight:700}
   .pill[aria-disabled=true]{opacity:.45;pointer-events:none}
   .preview-wrap{display:flex;flex-direction:column;align-items:center;gap:14px}
   #preview{position:relative;width:clamp(190px,24vw,260px);aspect-ratio:3/4;border-radius:34px;overflow:hidden;cursor:pointer;
-    border:1px solid rgba(255,255,255,.25);box-shadow:0 24px 60px rgba(0,0,0,.45),0 0 0 6px rgba(255,255,255,.05);
+    border:2px solid #fff;box-shadow:0 24px 50px rgba(31,58,77,.3),0 0 0 6px rgba(255,255,255,.35);
     transition:transform .3s;display:block;color:#fff;text-decoration:none}
   #preview:hover{transform:translateY(-4px) scale(1.02)}
   #preview svg.art{position:absolute;inset:0;width:100%;height:100%}
   .emblem{position:absolute;inset:0;display:grid;place-items:center;font-weight:700;font-size:clamp(26px,3.4vw,40px);
     text-shadow:0 4px 18px rgba(0,0,0,.35);text-align:center;padding:10px}
   .open-ic{position:absolute;top:14px;right:14px;width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.9);
-    color:#4a2147;display:grid;place-items:center;font-weight:700;font-size:16px}
-  .meta{position:absolute;left:0;right:0;bottom:0;padding:34px 16px 16px;background:linear-gradient(transparent,rgba(20,8,28,.75));font-size:13px}
+    color:var(--teal2);display:grid;place-items:center;font-weight:700;font-size:16px}
+  .meta{position:absolute;left:0;right:0;bottom:0;padding:34px 16px 16px;background:linear-gradient(transparent,rgba(18,52,70,.8));font-size:13px;color:#fff}
   .meta b{display:block;font-size:16px}
-  .meta small{color:var(--muted)}
-  #stage{position:relative;z-index:2;height:330px;margin-top:auto;overflow:hidden;touch-action:pan-y;user-select:none}
+  .meta small{color:#d6eef5}
+  #stage{position:relative;z-index:2;height:346px;margin-top:auto;overflow:hidden;touch-action:pan-y;user-select:none}
   .disc,.ring{position:absolute;border-radius:50%;left:0;top:0;pointer-events:none}
-  .disc{background:radial-gradient(circle at 50% 0%,#ff8ab8 0%,#e0529a 45%,#8a2f73 100%);
-    box-shadow:0 -10px 60px rgba(255,111,168,.45),inset 0 8px 30px rgba(255,255,255,.25);transition:none}
-  .ring{border:1.5px solid rgba(255,255,255,.28)}
-  .card{position:absolute;left:0;top:0;border-radius:22px;overflow:hidden;cursor:pointer;border:2px solid rgba(255,255,255,.55);
-    box-shadow:0 10px 30px rgba(40,10,50,.4);transition:transform .7s cubic-bezier(.3,.8,.2,1),opacity .5s;background:#333;padding:0;color:#fff}
+  .disc{background:radial-gradient(circle at 50% 0%,#8ff0f6 0%,#27b8c9 45%,#168a9b 100%);
+    box-shadow:0 -10px 50px rgba(39,184,201,.45),inset 0 8px 30px rgba(255,255,255,.35);transition:none}
+  .ring{border:1.5px solid rgba(255,255,255,.4)}
+  .card{position:absolute;left:0;top:0;border-radius:22px;overflow:hidden;cursor:pointer;border:2px solid rgba(255,255,255,.8);
+    box-shadow:0 10px 26px rgba(10,60,75,.35);transition:transform .7s cubic-bezier(.3,.8,.2,1),opacity .5s;background:#333;padding:0;color:#fff}
   .card svg.art{position:absolute;inset:0;width:100%;height:100%}
   .card .emblem{font-size:15px}
   .card .lbl{position:absolute;left:0;right:0;bottom:0;padding:16px 8px 8px;font:600 11px 'Poppins',sans-serif;text-align:center;
-    background:linear-gradient(transparent,rgba(20,8,28,.7))}
-  .card.soon{filter:saturate(.35) brightness(.8)}
-  .card.active{border-color:#fff;box-shadow:0 14px 40px rgba(40,10,50,.55),0 0 0 4px rgba(255,255,255,.35)}
-  .nav-btn{position:absolute;bottom:14px;z-index:200;width:44px;height:44px;border-radius:50%;border:1px solid rgba(255,255,255,.45);
-    background:rgba(40,10,50,.45);color:#fff;font-size:18px;cursor:pointer;backdrop-filter:blur(6px)}
-  .nav-btn:hover{background:rgba(40,10,50,.7)}
-  #prev{left:max(12px,calc(50% - 360px))}#next{right:max(12px,calc(50% - 360px))}
-  #viewall{position:absolute;left:50%;top:-6px;transform:translateX(-50%);z-index:200}
+    background:linear-gradient(transparent,rgba(18,52,70,.75))}
+  .card.soon{filter:saturate(.4) brightness(.92)}
+  .card.active{border-color:#fff;box-shadow:0 14px 36px rgba(10,60,75,.5),0 0 0 4px rgba(255,255,255,.55)}
+  .nav-btn{position:absolute;bottom:14px;z-index:200;width:44px;height:44px;border-radius:50%;border:2px solid #fff;
+    background:rgba(22,138,155,.85);color:#fff;font-size:18px;cursor:pointer;backdrop-filter:blur(6px)}
+  .nav-btn:hover{background:var(--teal2)}
+  #prev{left:24px;bottom:auto;top:200px}#next{right:24px;bottom:auto;top:200px}
+  #viewall{position:absolute;left:50%;top:10px;transform:translateX(-50%);z-index:200;white-space:nowrap;padding:6px 8px 6px 20px}
+  #viewall:hover{transform:translateX(-50%) translateY(-2px)}
   .badge{position:absolute;left:50%;bottom:6px;transform:translateX(-50%);width:64px;height:64px;border-radius:50%;z-index:200;pointer-events:none;
-    background:linear-gradient(135deg,#3b5bdb,#7a4bff);border:5px solid rgba(255,255,255,.85);display:grid;place-items:center;
+    background:linear-gradient(135deg,var(--pink2),var(--pink));color:#fff;border:5px solid rgba(255,255,255,.9);display:grid;place-items:center;
     font-weight:700;font-size:20px;box-shadow:0 10px 26px rgba(0,0,0,.4)}
-  dialog{border:0;border-radius:24px;padding:0;max-width:min(920px,94vw);width:100%;background:linear-gradient(160deg,#2a1432,#4a2147);color:#fff;
-    box-shadow:0 30px 80px rgba(0,0,0,.6)}
-  dialog::backdrop{background:rgba(10,4,16,.7);backdrop-filter:blur(4px)}
+  dialog{border:0;border-radius:24px;padding:0;max-width:min(920px,94vw);width:100%;background:linear-gradient(180deg,#eaf8fc,#cfeaf3);color:var(--text);
+    box-shadow:0 30px 80px rgba(10,60,75,.4)}
+  dialog::backdrop{background:rgba(18,52,70,.55);backdrop-filter:blur(4px)}
   .dlg{padding:22px}.dlg h2{margin:0 0 14px;font-size:20px}
   .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
-  .grid a{position:relative;aspect-ratio:3/4;border-radius:20px;overflow:hidden;color:#fff;text-decoration:none;border:1px solid rgba(255,255,255,.3)}
+  .grid a{position:relative;aspect-ratio:3/4;border-radius:20px;overflow:hidden;color:#fff;text-decoration:none;border:2px solid #fff;box-shadow:0 8px 20px rgba(10,60,75,.25)}
   .grid a svg.art{position:absolute;inset:0;width:100%;height:100%}
-  .x{float:right;background:rgba(255,255,255,.12);border:0;color:#fff;width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:16px}
+  .x{float:right;background:#fff;border:0;color:var(--text);width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:16px}
   @media (max-width:760px){
     .hero{grid-template-columns:1fr;text-align:left;margin-top:18px}
     .preview-wrap{order:2}
     #desc{min-height:0;margin:10px 0 14px;font-size:12px}
     #preview{width:min(62vw,250px)}
-    #stage{height:300px}
+    #stage{height:316px}
     #prev{left:10px}#next{right:10px}
   }
 </style>
@@ -123,7 +124,7 @@
 
 <dialog id="all"><div class="dlg"><button class="x" id="all-x" aria-label="Close">&#10005;</button><h2>All innovations</h2><div class="grid" id="grid"></div></div></dialog>
 <dialog id="about"><div class="dlg"><button class="x" id="about-x" aria-label="Close">&#10005;</button><h2>About A Lab</h2>
-  <p style="line-height:1.7;color:#e2c9e6;margin:0">A Lab is the workshop of Anang. Every application he publishes lands on the disc below, so this wall keeps growing.</p></div></dialog>
+  <p style="line-height:1.7;color:var(--muted);margin:0">A Lab is the workshop of Anang. Every application he publishes lands on the disc below, so this wall keeps growing.</p></div></dialog>
 
 <script src="apps.js"></script>
 <script>
@@ -154,12 +155,12 @@
   }
   // background
   var bg=document.getElementById('bg');
-  bg.innerHTML=lowpoly(1600,900,16,9,'#2a1634','#6a2a56',11,false);
+  bg.innerHTML=lowpoly(1600,900,16,9,'#9fd3ea','#e6f6fb',11,false);
 
   // ---------- data (+ "coming soon" slots so the disc always looks full) ----------
   var apps=(window.APPS||[]).slice(), MIN=7, k=1;
   while(apps.length<MIN){apps.push({id:'soon'+k,title:'Coming soon',category:'Next innovation',soon:true,
-    description:'The next innovation from the lab will appear here. Check back soon.',emblem:'?',palette:['#7b6a8f','#3a2a50']});k++}
+    description:'The next innovation from the lab will appear here. Check back soon.',emblem:'?',palette:['#9db4c0','#5f7c8c']});k++}
   var n=apps.length, active=0;
 
   // ---------- elements ----------
@@ -192,7 +193,7 @@
   function layout(){
     var W=stage.clientWidth,H=stage.clientHeight, mobile=W<760;
     var cw=mobile?104:140, ch=cw*1.25, R=Math.max(W*(mobile?1.0:.62),mobile?360:520);
-    var top=mobile?58:62, cx=W/2, cy=top+ch/2+R;
+    var top=mobile?76:80, cx=W/2, cy=top+ch/2+R;
     var step=(cw*1.12)/R;
     function place(el,size){el.style.width=el.style.height=size+'px';el.style.left=(cx-size/2)+'px';el.style.top=(cy-size/2)+'px'}
     place(disc,2*(R+ch/2+16)); place(ring1,2*(R-ch/2-18)); place(ring2,2*(R-ch/2-46));
