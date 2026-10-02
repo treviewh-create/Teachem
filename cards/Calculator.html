@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Simple animation for button press */
+        .btn:active {
+            transform: scale(0.95);
+            transition: transform 0.1s;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 flex items-center justify-center h-screen text-white">
+
+    <div class="w-full max-w-xs md:max-w-sm mx-auto bg-gray-800 rounded-2xl shadow-2xl p-6">
+        
+        <!-- Display -->
+        <div id="display" class="bg-gray-900 rounded-lg text-right text-5xl font-mono p-6 mb-6 break-all">0</div>
+
+        <!-- Buttons Grid -->
+        <div class="grid grid-cols-4 gap-4">
+            <!-- Row 1 -->
+            <button onclick="clearDisplay()" class="btn text-2xl bg-gray-700 hover:bg-gray-600 rounded-lg p-5 col-span-2 text-white">C</button>
+            <button onclick="appendOperator('/')" class="btn text-2xl bg-orange-500 hover:bg-orange-400 rounded-lg p-5 text-white">÷</button>
+            <button onclick="appendOperator('*')" class="btn text-2xl bg-orange-500 hover:bg-orange-400 rounded-lg p-5 text-white">×</button>
+
+            <!-- Row 2 -->
+            <button onclick="appendNumber('7')" class="btn text-2xl bg-gray-600 hover:bg-gray-500 rounded-lg p-5 text-white">7</button>
+            <button onclick="appendNumber('8')" class="btn text-2xl bg-gray-600 hover:bg-gray-500 rounded-lg p-5 text-white">8</button>
+            <button onclick="appendNumber('9')" class="btn text-2xl bg-gray-600 hover:bg-gray-500 rounded-lg p-5 text-white">9</button>
+            <button onclick="appendOperator('-')" class="btn text-2xl bg-orange-500 hover:bg-orange-400 rounded-lg p-5 text-white">-</button>
+
+            <!-- Row 3 -->
+            <button onclick="appendNumber('4')" class="btn text-2xl bg-gray-600 hover:bg-gray-500 rounded-lg p-5 text-white">4</button>
+            <button onclick="appendNumber('5')" class="btn text-2xl bg-gray-600 hover:bg-gray-500 rounded-lg p-5 text-white">5</button>
+            <button onclick="appendNumber('6')" class="btn text-2xl bg-gray-600 hover:bg-gray-500 rounded-lg p-5 text-white">6</button>
+            <button onclick="appendOperator('+')" class="btn text-2xl bg-orange-500 hover:bg-orange-400 rounded-lg p-5 text-white">+</button>
+
+            <!-- Row 4 & 5 -->
+            <button onclick="appendNumber('1')" class="btn text-2xl bg-gray-600 hover:bg-gray-500 rounded-lg p-5 text-white">1</button>
+            <button onclick="appendNumber('2')" class="btn text-2xl bg-gray-600 hover:bg-gray-500 rounded-lg p-5 text-white">2</button>
+            <button onclick="appendNumber('3')" class="btn text-2xl bg-gray-600 hover:bg-gray-500 rounded-lg p-5 text-white">3</button>
+            <button onclick="calculateResult()" class="btn text-2xl bg-orange-500 hover:bg-orange-400 rounded-lg p-5 row-span-2 text-white">=</button>
+            
+            <button onclick="appendNumber('0')" class="btn text-2xl bg-gray-600 hover:bg-gray-500 rounded-lg p-5 col-span-2 text-white">0</button>
+            <button onclick="appendNumber('.')" class="btn text-2xl bg-gray-600 hover:bg-gray-500 rounded-lg p-5 text-white">.</button>
+        </div>
+    </div>
+
+    <script>
+        const display = document.getElementById('display');
+        let currentInput = '0';
+        let operator = null;
+        let firstOperand = null;
+        let waitingForSecondOperand = false;
+
+        function updateDisplay() {
+            display.innerText = currentInput;
+        }
+
+        function clearDisplay() {
+            currentInput = '0';
+            operator = null;
+            firstOperand = null;
+            waitingForSecondOperand = false;
+            updateDisplay();
+        }
+
+        function appendNumber(number) {
+            if (waitingForSecondOperand) {
+                currentInput = number;
+                waitingForSecondOperand = false;
+            } else {
+                currentInput = currentInput === '0' ? number : currentInput + number;
+            }
+            updateDisplay();
+        }
+
+        function appendOperator(nextOperator) {
+            const inputValue = parseFloat(currentInput);
+
+            if (operator && waitingForSecondOperand) {
+                operator = nextOperator;
+                return;
+            }
+
+            if (firstOperand === null) {
+                firstOperand = inputValue;
+            } else if (operator) {
+                const result = performCalculation[operator](firstOperand, inputValue);
+                currentInput = String(result);
+                firstOperand = result;
+            }
+
+            waitingForSecondOperand = true;
+            operator = nextOperator;
+            updateDisplay();
+        }
+
+        const performCalculation = {
+            '/': (first, second) => second === 0 ? 'Error' : first / second,
+            '*': (first, second) => first * second,
+            '+': (first, second) => first + second,
+            '-': (first, second) => first - second,
+            '=': (first, second) => second
+        };
+
+        function calculateResult() {
+            if (operator === null || waitingForSecondOperand) {
+                return;
+            }
+
+            const secondOperand = parseFloat(currentInput);
+            const result = performCalculation[operator](firstOperand, secondOperand);
+            
+            if (result === 'Error') {
+                 currentInput = 'Error';
+            } else {
+                // Round to a reasonable number of decimal places to avoid floating point issues
+                currentInput = String(Math.round(result * 100000000) / 100000000);
+            }
+
+            operator = null;
+            firstOperand = null;
+            waitingForSecondOperand = false;
+            updateDisplay();
+        }
+        
+        // Initial display update
+        updateDisplay();
+    </script>
+
+</body>
+</html>

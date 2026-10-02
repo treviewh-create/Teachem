@@ -1,0 +1,215 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Dad's Innovations</title>
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+        <style>
+            /* CSS Color and Font Variables */
+            :root {
+                --bg-dark-blue: #4a4a7c;
+                --sidebar-highlight: #5e5e94;
+                --card-bg: #6a6a9f;
+                --text-primary: #ffffff;
+                --text-secondary: #d1d1e0;
+                --accent-gold: #e6c86e;
+            }
+            /* General Body Styling */
+            body {
+                font-family: 'Poppins', sans-serif;
+                margin: 0;
+                padding: 0;
+                background-color: var(--bg-dark-blue);
+                color: var(--text-primary);
+            }
+            .page-container {
+                display: flex;
+                min-height: 100vh;
+                border-right: 8px solid var(--accent-gold);
+            }
+            .sidebar {
+                flex: 0 0 260px;
+                padding: 2.5rem 2rem;
+            }
+            .sidebar h2 {
+                font-weight: 700;
+                font-size: 0.9rem;
+                letter-spacing: 1px;
+                text-transform: uppercase;
+                color: var(--text-secondary);
+                margin-bottom: 2rem;
+            }
+            .category-list {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+            }
+            .category-list li {
+                margin-bottom: 1.5rem;
+            }
+            .category-list a {
+                text-decoration: none;
+                color: var(--text-primary);
+                font-weight: 500;
+                font-size: 1rem;
+                transition: color 0.3s ease;
+            }
+            .category-list a:hover {
+                color: var(--accent-gold);
+            }
+            .free-delivery-box {
+                background-color: var(--sidebar-highlight);
+                padding: 1.5rem;
+                border-radius: 8px;
+                margin-top: 3rem;
+            }
+            .free-delivery-box h3 {
+                margin: 0 0 0.5rem 0;
+                font-weight: 600;
+            }
+            .free-delivery-box p {
+                margin: 0;
+                color: var(--text-secondary);
+                font-size: 0.9rem;
+            }
+            .main-content {
+                flex-grow: 1;
+                padding: 2.5rem 3rem;
+            }
+            .content-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 2rem;
+            }
+            .content-header .title {
+                font-size: 2.5rem;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 2px;
+            }
+            .content-header .filters {
+                display: flex;
+                gap: 2rem;
+                color: var(--text-secondary);
+            }
+            #cards-container {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+                gap: 2rem;
+            }
+            .card {
+                background-color: var(--card-bg);
+                border-radius: 8px;
+                overflow: hidden;
+                text-decoration: none;
+                color: var(--text-primary);
+                display: flex;
+                flex-direction: column;
+                transition: transform 0.3s ease;
+            }
+            .card:hover {
+                transform: translateY(-5px);
+            }
+            .card-content {
+                padding: 1.5rem;
+                flex-grow: 1;
+                display: flex;
+                flex-direction: column;
+            }
+            .card-title {
+                font-size: 1.25rem;
+                font-weight: 600;
+                margin: 0 0 0.5rem 0;
+            }
+            .card-description {
+                font-size: 0.9rem;
+                color: var(--text-secondary);
+                margin: 0;
+                flex-grow: 1;
+                margin-bottom: 1rem;
+            }
+            .card-footer {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-top: 1rem;
+            }
+            .card-category {
+                font-size: 0.8rem;
+                font-weight: 600;
+                letter-spacing: 1px;
+                text-transform: uppercase;
+            }
+            .card-price {
+                font-size: 1.25rem;
+                font-weight: 600;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="page-container">
+            <aside class="sidebar">
+                <h2>Innovations</h2>
+                <ul class="category-list">
+                    <li><a href="#">All</a></li>
+                    <li><a href="#">Recent</a></li>
+                    <li><a href="#">Prototypes</a></li>
+                    <li><a href="#">In-progress</a></li>
+                    <li><a href="#">Completed</a></li>
+                </ul>
+                <div class="free-delivery-box">
+                    <h3>About This Site</h3>
+                    <p>A place to showcase new ideas, inventions, and projects.</p>
+                </div>
+            </aside>
+            <main class="main-content">
+                <header class="content-header">
+                    <span class="title">My Innovations</span>
+                    <nav class="filters">
+                        <span>Sorting</span>
+                        <span>Recent ⌄</span>
+                        <span>Category ⌄</span>
+                    </nav>
+                </header>
+                <div id="cards-container">
+                    
+            <a href="cards/Calculator.html" class="card">
+                <div class="card-content">
+                    <h3 class="card-title">Calculator</h3>
+                    <p>Click to learn more about this innovation.</p>
+                </div>
+            </a>
+        
+
+            <a href="cards/Delphy%20Calculator.html" class="card">
+                <div class="card-content">
+                    <h3 class="card-title">Delphy Calculator</h3>
+                    <p>Click to learn more about this innovation.</p>
+                </div>
+            </a>
+        
+
+            <a href="cards/Linear%20Calculator.html" class="card">
+                <div class="card-content">
+                    <h3 class="card-title">Linear Calculator</h3>
+                    <p>Click to learn more about this innovation.</p>
+                </div>
+            </a>
+        
+
+            <a href="cards/Menghitung_Perbandingan_Atribut.html" class="card">
+                <div class="card-content">
+                    <h3 class="card-title">Menghitung Perbandingan Atribut</h3>
+                    <p>Click to learn more about this innovation.</p>
+                </div>
+            </a>
+        
+                </div>
+            </main>
+        </div>
+    </body>
+    </html>
+  
