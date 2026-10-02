@@ -1,279 +1,142 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kalkulator Pengambilan Keputusan</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #1a202c;
-            color: #e2e8f0;
-        }
-        .container {
-            max-width: 960px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-        .table-container {
-            overflow-x: auto;
-            border-radius: 0.5rem;
-        }
-        .table-responsive {
-            min-width: 600px;
-        }
-        th, td {
-            text-align: center;
-            padding: 0.75rem;
-            white-space: nowrap;
-        }
-        th {
-            background-color: #2d3748;
-            border-bottom: 2px solid #4a5568;
-        }
-        td {
-            background-color: #2f405c;
-        }
-        .cell-p, .cell-x, .cell-placeholder {
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-        .cell-p:hover { background-color: #38a169; }
-        .cell-x:hover { background-color: #e53e3e; }
-        .cell-p { background-color: #38b2ac; }
-        .cell-x { background-color: #d69e2e; }
-        .cell-diagonal { background-color: #4a5568; }
-        .rank-cell { font-weight: bold; }
-        .weight-cell { font-weight: bold; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Attribute Comparison - A Lab</title>
+<link rel="stylesheet" href="shell.css">
+<style>
+  .mx{border-collapse:separate;border-spacing:6px}
+  .mx th{color:#e6e6f5;font-size:12.5px;padding:8px 10px;background:var(--field);border-radius:12px}
+  .mx td{padding:0}
+  .mx .rowh{background:var(--field);border-radius:12px;padding:10px 12px;text-align:left;font-weight:600;font-size:13px;white-space:nowrap}
+  .cell{width:100%;min-width:56px;height:44px;border-radius:12px;border:1px dashed var(--line);background:transparent;color:#fff;font:700 15px 'Poppins',sans-serif;cursor:pointer;transition:transform .15s,background .2s}
+  .cell:hover{transform:scale(1.06);border-color:var(--a1)}
+  .cell.p{background:linear-gradient(135deg,#34d399,#2dd4bf);border:0;color:#0b2a24}
+  .cell.x{background:linear-gradient(135deg,#ffb84d,var(--a1));border:0;color:#3a1a05}
+  .diag{height:44px;border-radius:12px;background:repeating-linear-gradient(135deg,#232333,#232333 6px,#1c1c28 6px,#1c1c28 12px)}
+  .sc,.rk{font-weight:700;text-align:center;min-width:48px}
+  .rk{color:var(--a2)}
+  .legend2{display:flex;gap:14px;flex-wrap:wrap;margin:0 0 14px;font-size:12.5px;color:var(--muted)}
+  .legend2 b{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:7px;margin-right:6px;color:#0b2a24}
+  .step{display:flex;align-items:center;gap:10px;margin:0 0 6px}
+  .step i{font-style:normal;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:700;background:linear-gradient(135deg,var(--a1),var(--a2))}
+  .step h3{margin:0}
+</style>
 </head>
-<body class="bg-gray-900 text-gray-200">
-    <div class="container p-8">
-        <h1 class="text-3xl font-bold mb-8 text-center">Kalkulator Pengambilan Keputusan Manajerial</h1>
-        
-        <div id="input-section" class="bg-gray-800 p-6 rounded-lg shadow-xl mb-8">
-            <h2 class="text-2xl font-semibold mb-4">Langkah 1: Masukkan Atribut</h2>
-            <p class="mb-4 text-gray-400">Masukkan nama-nama atribut (contoh: Biaya, Kualitas, Waktu, dll), satu per baris.</p>
-            <textarea id="attribute-input" class="w-full h-32 p-4 bg-gray-700 rounded-lg text-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-500" placeholder="Biaya&#10;Kualitas&#10;Waktu"></textarea>
-            <div class="flex justify-center mt-4 space-x-4">
-                <button id="start-button" class="bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-6 rounded-full transition-colors">Mulai Analisis</button>
-                <button id="reset-button" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-6 rounded-full transition-colors" style="display: none;">Ulangi</button>
-            </div>
-        </div>
-        
-        <div id="ranking-section" class="hidden">
-            <div class="bg-gray-800 p-6 rounded-lg shadow-xl mb-8">
-                <h2 class="text-2xl font-semibold mb-4">Langkah 2: Perbandingan Berpasangan</h2>
-                <p class="mb-4 text-gray-400">Klik setiap sel untuk membandingkan atribut. Klik dua kali untuk mengubah status. <br><span class="text-teal-400 font-semibold">P</span> = Kolom lebih prioritas. <span class="text-yellow-400 font-semibold">X</span> = Baris lebih prioritas.</p>
-                <div id="ranking-table-container" class="table-container mb-6"></div>
-            </div>
-        </div>
+<body style="--a1:#ff7a59;--a2:#e2503f" data-app="attributes">
+<div class="window">
+  <nav class="rail" id="rail"></nav>
+  <main class="main">
+    <header class="topbar"><div><small>A Lab &middot; Decision making</small><h1>Attribute Comparison</h1></div><span class="chip">A LAB</span></header>
 
-        <div id="results-section" class="hidden">
-            <div class="bg-gray-800 p-6 rounded-lg shadow-xl">
-                <h2 class="text-2xl font-semibold mb-4">Langkah 3: Hasil & Pembobotan Atribut</h2>
-                <p class="mb-4 text-gray-400">Berikut adalah peringkat dan bobot akhir dari setiap atribut.</p>
-                <div id="results-table-container" class="table-container"></div>
-            </div>
-        </div>
+    <section class="hero" data-c1="#ff9a6a" data-c2="#c63b2d">
+      <svg class="hero-art"></svg>
+      <div><h2>Bandingkan, urutkan, bobot</h2><p>Masukkan atribut, bandingkan berpasangan dengan satu klik, dan lihat peringkat serta bobot akhirnya secara langsung.</p></div>
+    </section>
+
+    <section class="stats">
+      <div class="stat big"><span>Atribut terpenting</span><b id="s-top">-</b></div>
+      <div class="stat"><span>Jumlah atribut</span><b id="s-n">0</b></div>
+      <div class="stat"><span>Perbandingan terisi</span><b id="s-done">0 / 0</b></div>
+    </section>
+
+    <section class="card" id="input-card">
+      <div class="step"><i>1</i><h3>Masukkan atribut</h3></div>
+      <p class="sub">Tulis satu atribut per baris, misalnya Biaya, Kualitas, Waktu.</p>
+      <textarea id="attrs" placeholder="Biaya&#10;Kualitas&#10;Waktu"></textarea>
+      <div class="row" style="margin-top:14px">
+        <button class="btn" id="start">Mulai analisis</button>
+        <button class="btn ghost" id="sample">Isi contoh</button>
+      </div>
+    </section>
+
+    <div class="hidden" id="work">
+      <section class="card">
+        <div class="step"><i>2</i><h3>Perbandingan berpasangan</h3></div>
+        <p class="sub">Klik sel untuk berganti: kosong &rarr; P &rarr; X &rarr; kosong. Sel kebalikannya terisi otomatis.</p>
+        <div class="legend2"><span><b style="background:#34d399">P</b>kolom lebih prioritas</span><span><b style="background:#ffb84d">X</b>baris lebih prioritas</span></div>
+        <div class="scroll"><div id="matrix"></div></div>
+        <div class="row" style="margin-top:14px"><button class="btn small danger" id="reset">Ulangi dari awal</button><button class="btn small ghost" id="clear">Kosongkan perbandingan</button></div>
+      </section>
+
+      <section class="card">
+        <div class="step"><i>3</i><h3>Hasil dan bobot atribut</h3></div>
+        <p class="sub">Peringkat diurutkan dari skor ΣC tertinggi. Bobot memakai (n &minus; r + 1).</p>
+        <div class="bars" id="bars"></div>
+        <div class="scroll" style="margin-top:12px"><table><thead><tr><th class="l">Atribut</th><th>Peringkat (r)</th><th>1/r</th><th>(n&minus;r+1)</th><th>Bobot (Wj)</th></tr></thead><tbody id="rt"></tbody></table></div>
+      </section>
     </div>
+  </main>
+</div>
+<script src="../apps.js"></script>
+<script src="shell.js"></script>
+<script>
+(function(){
+  var E=Shell.esc,attrs=[],M=[];
+  function $(id){return document.getElementById(id)}
 
-    <script>
-        const attributeInput = document.getElementById('attribute-input');
-        const startButton = document.getElementById('start-button');
-        const resetButton = document.getElementById('reset-button');
-        const rankingSection = document.getElementById('ranking-section');
-        const resultsSection = document.getElementById('results-section');
-        const rankingTableContainer = document.getElementById('ranking-table-container');
-        const resultsTableContainer = document.getElementById('results-table-container');
+  $('sample').onclick=function(){$('attrs').value='Biaya\nKualitas\nWaktu\nRisiko'};
+  $('start').onclick=function(){
+    var list=$('attrs').value.split('\n').map(function(s){return s.trim()}).filter(Boolean);
+    var uniq=list.filter(function(v,i){return list.indexOf(v)===i});
+    if(uniq.length<2){Shell.toast('Masukkan setidaknya dua atribut yang berbeda.',true);return}
+    if(uniq.length>12){Shell.toast('Maksimal 12 atribut.',true);return}
+    attrs=uniq;M=attrs.map(function(){return Array(attrs.length).fill(null)});
+    $('input-card').classList.add('hidden');$('work').classList.remove('hidden');
+    build();update();
+  };
+  $('reset').onclick=function(){attrs=[];M=[];$('work').classList.add('hidden');$('input-card').classList.remove('hidden');stats()};
+  $('clear').onclick=function(){M=attrs.map(function(){return Array(attrs.length).fill(null)});build();update()};
 
-        let attributes = [];
-        let comparisonMatrix = [];
+  function build(){
+    var n=attrs.length,h='<table class="mx"><thead><tr><th></th>';
+    attrs.forEach(function(a){h+='<th>'+E(a)+'</th>'});
+    h+='<th>ΣC</th><th>Peringkat</th></tr></thead><tbody>';
+    for(var i=0;i<n;i++){
+      h+='<tr><td class="rowh">'+E(attrs[i])+'</td>';
+      for(var j=0;j<n;j++)h+=i===j?'<td><div class="diag"></div></td>':'<td><button class="cell" data-i="'+i+'" data-j="'+j+'" aria-label="'+E(attrs[i])+' dibanding '+E(attrs[j])+'"></button></td>';
+      h+='<td class="sc" id="sc'+i+'">0</td><td class="rk" id="rk'+i+'">-</td></tr>';
+    }
+    $('matrix').innerHTML=h+'</tbody></table>';
+    paint();
+  }
+  function paint(){
+    document.querySelectorAll('.cell').forEach(function(c){
+      var v=M[+c.dataset.i][+c.dataset.j];c.textContent=v||'';c.className='cell'+(v==='P'?' p':v==='X'?' x':'')});
+  }
+  $('matrix').addEventListener('click',function(e){
+    var c=e.target.closest('.cell');if(!c)return;
+    var i=+c.dataset.i,j=+c.dataset.j,cur=M[i][j],nx=cur==='P'?'X':cur==='X'?null:'P';
+    M[i][j]=nx;M[j][i]=nx==='P'?'X':nx==='X'?'P':null;
+    paint();update();
+  });
 
-        startButton.addEventListener('click', startAnalysis);
-        resetButton.addEventListener('click', resetApp);
+  function stats(){
+    var n=attrs.length,pairs=n*(n-1)/2,done=0;
+    for(var i=0;i<n;i++)for(var j=i+1;j<n;j++)if(M[i][j])done++;
+    $('s-n').textContent=n;$('s-done').textContent=done+' / '+pairs;
+    return done;
+  }
 
-        function startAnalysis() {
-            const input = attributeInput.value.trim();
-            if (input === "") {
-                alert("Harap masukkan setidaknya satu atribut.");
-                return;
-            }
-            attributes = input.split('\n').map(attr => attr.trim()).filter(attr => attr !== "");
-            if (attributes.length < 2) {
-                alert("Harap masukkan setidaknya dua atribut untuk perbandingan.");
-                return;
-            }
-            
-            // Sembunyikan input dan tampilkan bagian ranking
-            document.getElementById('input-section').classList.add('hidden');
-            rankingSection.classList.remove('hidden');
-            resetButton.style.display = 'block';
+  function update(){
+    var n=attrs.length,done=stats();
+    var scores=attrs.map(function(_,i){return M[i].filter(function(v){return v==='P'}).length});
+    var order=attrs.map(function(a,i){return {i:i,s:scores[i]}}).sort(function(a,b){return b.s-a.s});
+    var rank=[],r=1;order.forEach(function(o,k){if(k>0&&o.s<order[k-1].s)r++;rank[o.i]=r});
+    scores.forEach(function(s,i){$('sc'+i).textContent=s;$('rk'+i).textContent=rank[i]});
+    var tot=0,wr=rank.map(function(r){var v=n-r+1;tot+=v;return v}),w=wr.map(function(v){return tot>0?v/tot:0});
 
-            comparisonMatrix = Array.from({ length: attributes.length }, () =>
-                Array(attributes.length).fill(null)
-            );
-            
-            generateRankingTable();
-        }
-
-        function resetApp() {
-            attributes = [];
-            comparisonMatrix = [];
-            rankingSection.classList.add('hidden');
-            resultsSection.classList.add('hidden');
-            rankingTableContainer.innerHTML = '';
-            resultsTableContainer.innerHTML = '';
-            attributeInput.value = '';
-            document.getElementById('input-section').classList.remove('hidden');
-            resetButton.style.display = 'none';
-        }
-
-        function generateRankingTable() {
-            let tableHTML = `
-                <table class="w-full table-auto border-collapse">
-                    <thead>
-                        <tr>
-                            <th class="border border-gray-700"></th>
-                            ${attributes.map(attr => `<th class="border border-gray-700">${attr}</th>`).join('')}
-                            <th class="border border-gray-700">ΣC</th>
-                            <th class="border border-gray-700">Peringkat</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-            `;
-
-            for (let i = 0; i < attributes.length; i++) {
-                tableHTML += `<tr><td class="border border-gray-700 font-bold">${attributes[i]}</td>`;
-                for (let j = 0; j < attributes.length; j++) {
-                    if (i === j) {
-                        tableHTML += `<td class="border border-gray-700 cell-diagonal bg-gray-600">-</td>`;
-                    } else {
-                        tableHTML += `<td class="border border-gray-700 cell-placeholder" data-row="${i}" data-col="${j}"></td>`;
-                    }
-                }
-                tableHTML += `<td class="border border-gray-700 sigma-c-cell" id="sigma-c-${i}">0</td>`;
-                tableHTML += `<td class="border border-gray-700 rank-cell" id="rank-${i}">-</td></tr>`;
-            }
-
-            tableHTML += `</tbody></table>`;
-            rankingTableContainer.innerHTML = tableHTML;
-            
-            // Tambahkan event listener untuk sel-sel tabel
-            rankingTableContainer.querySelectorAll('td:not(.cell-diagonal):not(.sigma-c-cell):not(.rank-cell)').forEach(cell => {
-                cell.addEventListener('click', () => toggleComparison(cell));
-            });
-        }
-
-        function toggleComparison(cell) {
-            const row = parseInt(cell.dataset.row);
-            const col = parseInt(cell.dataset.col);
-            const reciprocalCell = rankingTableContainer.querySelector(`[data-row="${col}"][data-col="${row}"]`);
-
-            let nextState;
-            if (cell.innerHTML === 'P') {
-                nextState = 'X';
-            } else if (cell.innerHTML === 'X') {
-                nextState = '';
-            } else {
-                nextState = 'P';
-            }
-
-            // Setel sel saat ini
-            cell.innerHTML = nextState;
-            cell.className = `border border-gray-700 ${nextState === 'P' ? 'cell-p' : nextState === 'X' ? 'cell-x' : 'cell-placeholder'}`;
-            comparisonMatrix[row][col] = nextState;
-
-            // Setel sel resiprokal
-            if (nextState === 'P') {
-                reciprocalCell.innerHTML = 'X';
-                reciprocalCell.className = 'border border-gray-700 cell-x';
-                comparisonMatrix[col][row] = 'X';
-            } else if (nextState === 'X') {
-                reciprocalCell.innerHTML = 'P';
-                reciprocalCell.className = 'border border-gray-700 cell-p';
-                comparisonMatrix[col][row] = 'P';
-            } else {
-                reciprocalCell.innerHTML = '';
-                reciprocalCell.className = 'border border-gray-700 cell-placeholder';
-                comparisonMatrix[col][row] = null;
-            }
-
-            updateRankAndWeight();
-        }
-
-        function updateRankAndWeight() {
-            // Hitung ΣC
-            const scores = attributes.map((_, i) =>
-                comparisonMatrix[i].filter(val => val === 'P').length
-            );
-
-            // Perbarui sel ΣC
-            scores.forEach((score, i) => {
-                document.getElementById(`sigma-c-${i}`).innerText = score;
-            });
-
-            // Dapatkan atribut yang diperingkat berdasarkan skor
-            const rankedAttributes = attributes.map((name, index) => ({ name, score: scores[index], originalIndex: index }))
-                                              .sort((a, b) => b.score - a.score);
-
-            // Perbarui sel peringkat dengan penanganan seri (ties)
-            let rankCounter = 1;
-            for (let i = 0; i < rankedAttributes.length; i++) {
-                // Jika skor saat ini lebih kecil dari skor sebelumnya, tambahkan peringkat
-                if (i > 0 && rankedAttributes[i].score < rankedAttributes[i - 1].score) {
-                    rankCounter++;
-                }
-                // Tetapkan peringkat
-                rankedAttributes[i].rank = rankCounter;
-                // Perbarui tampilan
-                document.getElementById(`rank-${rankedAttributes[i].originalIndex}`).innerText = rankedAttributes[i].rank;
-            }
-
-            // Hitung bobot
-            const n = attributes.length;
-            const ranks = attributes.map((_, i) => parseInt(document.getElementById(`rank-${i}`).innerText));
-            const weightedRanks = ranks.map(rank => n - rank + 1);
-            const totalWeightedRank = weightedRanks.reduce((sum, current) => sum + current, 0);
-
-            let resultsTableHTML = `
-                <table class="w-full table-auto border-collapse">
-                    <thead>
-                        <tr>
-                            <th class="border border-gray-700">Atribut</th>
-                            <th class="border border-gray-700">Peringkat (r)</th>
-                            <th class="border border-gray-700">1/r</th>
-                            <th class="border border-gray-700">(n-r+1)</th>
-                            <th class="border border-gray-700">Bobot (Wj)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-            `;
-
-            for (let i = 0; i < attributes.length; i++) {
-                const rank = ranks[i];
-                const weightedRank = n - rank + 1;
-                const weight = totalWeightedRank > 0 ? (weightedRank / totalWeightedRank).toFixed(2) : '0.00';
-                
-                resultsTableHTML += `
-                    <tr>
-                        <td class="border border-gray-700">${attributes[i]}</td>
-                        <td class="border border-gray-700">${rank}</td>
-                        <td class="border border-gray-700">${(1/rank).toFixed(2)}</td>
-                        <td class="border border-gray-700">${weightedRank}</td>
-                        <td class="border border-gray-700 weight-cell">${weight}</td>
-                    </tr>
-                `;
-            }
-            resultsTableHTML += `</tbody></table>`;
-            
-            // Pastikan bagian hasil terlihat
-            resultsSection.classList.remove('hidden');
-            resultsTableContainer.innerHTML = resultsTableHTML;
-        }
-
-    </script>
+    var idx=attrs.map(function(_,i){return i}).sort(function(a,b){return rank[a]-rank[b]||a-b});
+    $('s-top').textContent=done?attrs[idx[0]]:'-';
+    var max=Math.max.apply(null,w)||1;
+    $('bars').innerHTML=done?idx.map(function(i){
+      return '<div class="bar"><span class="nm" title="'+E(attrs[i])+'">'+E(attrs[i])+'</span><div class="track"><div class="fill" style="width:'+(w[i]/max*100)+'%"></div></div><span class="pc">'+(w[i]*100).toFixed(0)+'%</span></div>'}).join('')
+      :'<p class="note">Isi beberapa perbandingan di atas untuk melihat hasilnya.</p>';
+    $('rt').innerHTML=idx.map(function(i){
+      return '<tr><td class="l">'+E(attrs[i])+'</td><td>'+rank[i]+'</td><td>'+(1/rank[i]).toFixed(2)+'</td><td>'+wr[i]+'</td><td><b>'+w[i].toFixed(2)+'</b></td></tr>'}).join('');
+  }
+})();
+</script>
 </body>
 </html>

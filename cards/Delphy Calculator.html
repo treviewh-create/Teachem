@@ -1,321 +1,158 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kalkulator Metode Delphi Fleksibel</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-        .action-button {
-            @apply bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-300 text-sm;
-        }
-        .danger-button {
-             @apply bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded-md transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-300 text-xs;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Delphi Calculator - A Lab</title>
+<link rel="stylesheet" href="shell.css">
+<style>
+  .donut-wrap{display:flex;align-items:center;gap:22px;flex-wrap:wrap}
+  .donut{position:relative;width:170px;height:170px;flex:none}
+  .donut svg{transform:rotate(-90deg)}
+  .donut .mid{position:absolute;inset:0;display:grid;place-items:center;text-align:center;font-size:12px;color:var(--muted)}
+  .donut .mid b{display:block;font-size:24px;color:#fff}
+  .legend{list-style:none;margin:0;padding:0;display:grid;gap:8px;font-size:13px;min-width:0;flex:1}
+  .legend li{display:flex;align-items:center;gap:10px}
+  .legend i{width:12px;height:12px;border-radius:4px;flex:none}
+  .legend span{margin-left:auto;font-weight:600}
+  td input{min-width:84px;text-align:center;padding:9px 8px}
+  td.l input{text-align:left;min-width:130px}
+  #bad{color:var(--bad);font-size:13px;min-height:20px;margin-top:10px}
+</style>
 </head>
-<body class="bg-gray-100 text-gray-800">
+<body style="--a1:#2dd4bf;--a2:#3b82f6" data-app="delphi">
+<div class="window">
+  <nav class="rail" id="rail"></nav>
+  <main class="main">
+    <header class="topbar"><div><small>A Lab &middot; Research</small><h1>Delphi Calculator</h1></div><span class="chip">A LAB</span></header>
 
-    <div class="container mx-auto p-4 sm:p-6 md:p-8">
-        
-        <header class="text-center mb-8">
-            <h1 class="text-3xl md:text-4xl font-bold text-gray-900">Kalkulator Metode Delphi Fleksibel</h1>
-            <p class="mt-2 text-gray-600 max-w-2xl mx-auto">Alat analisis Delphi yang dinamis. Tambah/hapus kriteria dan panelis sesuai kebutuhan studi kasus Anda.</p>
-        </header>
+    <section class="hero" data-c1="#2dd4bf" data-c2="#3b82f6">
+      <svg class="hero-art"></svg>
+      <div><h2>Metode Delphi, tanpa repot</h2><p>Tambah kriteria dan panelis sesuai studi kasus Anda. Hasil dihitung langsung setiap kali Anda mengubah angka.</p></div>
+    </section>
 
-        <main class="bg-white p-6 rounded-2xl shadow-lg">
+    <section class="stats">
+      <div class="stat big"><span>Estimasi akhir (nilai harapan)</span><b id="s-final">-</b></div>
+      <div class="stat"><span>Probabilitas tertinggi</span><b id="s-top">-</b></div>
+      <div class="stat"><span>Kriteria</span><b id="s-crit">0</b></div>
+      <div class="stat"><span>Panelis</span><b id="s-pan">0</b></div>
+    </section>
 
-            <!-- Controls Section -->
-            <section id="controls-section" class="mb-6 pb-6 border-b border-gray-200">
-                <h2 class="text-2xl font-semibold mb-4 text-gray-800">Pengaturan Tabel</h2>
-                <div class="flex flex-wrap gap-4 justify-center">
-                    <button id="add-row-btn" class="action-button">Tambah Kriteria</button>
-                    <button id="add-col-btn" class="action-button">Tambah Panelis</button>
-                    <button id="remove-col-btn" class="action-button bg-gray-500 hover:bg-gray-600">Hapus Panelis Terakhir</button>
-                </div>
-            </section>
+    <div class="cols">
+      <div>
+        <section class="card">
+          <h3>1. Input probabilitas panelis</h3>
+          <p class="sub">Isi nilai 0 sampai 1 untuk setiap panelis. Nilai tengah (MP) dipakai untuk menghitung estimasi akhir.</p>
+          <div class="row" style="margin-bottom:14px">
+            <button class="btn small" id="add-row">+ Kriteria</button>
+            <button class="btn small ghost" id="add-col">+ Panelis</button>
+            <button class="btn small ghost" id="rm-col">&minus; Panelis</button>
+            <button class="btn small danger" id="reset">Reset contoh</button>
+          </div>
+          <div class="scroll"><table><thead id="thead"></thead><tbody id="tbody"></tbody></table></div>
+          <div id="bad"></div>
+        </section>
+      </div>
 
-            <!-- Input Table -->
-            <section id="input-section">
-                <h2 class="text-2xl font-semibold mb-4 text-gray-800">1. Input Probabilitas Panelis</h2>
-                <div class="overflow-x-auto">
-                    <table class="w-full min-w-[700px] text-sm text-left text-gray-500">
-                        <thead id="input-table-head" class="text-xs text-gray-700 uppercase bg-gray-50">
-                            <!-- Header will be generated by JavaScript -->
-                        </thead>
-                        <tbody id="input-table-body">
-                            <!-- Rows will be generated by JavaScript -->
-                        </tbody>
-                    </table>
-                </div>
-                 <div class="mt-8 text-center">
-                    <button id="calculate-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg transition-transform transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-300">
-                        Hitung Estimasi
-                    </button>
-                </div>
-                <div id="error-message" class="text-red-500 mt-4 text-center font-medium"></div>
-            </section>
-
-            <!-- Results Section (structure remains, content dynamic) -->
-            <section id="results-section" class="mt-10 hidden">
-                 <hr class="my-6 border-gray-200">
-                <div>
-                    <h2 class="text-2xl font-semibold mb-4 text-gray-800">2. Hasil Analisis Probabilitas</h2>
-                    <div class="overflow-x-auto">
-                         <table class="w-full min-w-[600px] text-sm text-left text-gray-500">
-                            <thead class="text-xs text-gray-700 uppercase bg-gray-50">
-                                <tr>
-                                    <th scope="col" class="px-6 py-3 rounded-l-lg">Kriteria</th>
-                                    <th scope="col" class="px-6 py-3 text-center">Rata-rata</th>
-                                    <th scope="col" class="px-6 py-3 text-center">Std Dev</th>
-                                    <th scope="col" class="px-6 py-3 text-center">CV</th>
-                                    <th scope="col" class="px-6 py-3 text-center rounded-r-lg">Probabilitas Final</th>
-                                </tr>
-                            </thead>
-                            <tbody id="result-table-1-body"></tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <div class="mt-8">
-                     <h2 class="text-2xl font-semibold mb-4 text-gray-800">3. Perhitungan Nilai Harapan (Expected Value)</h2>
-                     <div class="overflow-x-auto">
-                        <table class="w-full min-w-[600px] text-sm text-left text-gray-500">
-                            <thead class="text-xs text-gray-700 uppercase bg-gray-50">
-                                <tr>
-                                    <th scope="col" class="px-6 py-3 rounded-l-lg">Kriteria</th>
-                                    <th scope="col" class="px-6 py-3 text-center">Nilai Tengah (MP)</th>
-                                    <th scope="col" class="px-6 py-3 text-center">Probabilitas</th>
-                                    <th scope="col" class="px-6 py-3 text-center rounded-r-lg">MP x Prob</th>
-                                </tr>
-                            </thead>
-                            <tbody id="result-table-2-body"></tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <div class="mt-8 text-center bg-blue-50 border-2 border-blue-200 rounded-xl p-6">
-                    <h3 class="text-xl font-semibold text-gray-700">Estimasi Akhir (Nilai Harapan Total)</h3>
-                    <p id="final-result" class="text-4xl font-bold text-blue-600 mt-2"></p>
-                </div>
-            </section>
-        </main>
-        
-        <footer class="text-center mt-8 text-sm text-gray-500">
-            <p>Dibuat untuk analisis Metode Delphi yang fleksibel.</p>
-        </footer>
+      <div>
+        <section class="card">
+          <h3>Probabilitas final</h3>
+          <p class="sub">Porsi setiap kriteria terhadap total rata-rata panelis.</p>
+          <div class="donut-wrap">
+            <div class="donut"><svg width="170" height="170" viewBox="0 0 170 170" id="donut"></svg>
+              <div class="mid"><div><b id="d-top">-</b>tertinggi</div></div></div>
+            <ul class="legend" id="legend"></ul>
+          </div>
+        </section>
+        <section class="card">
+          <h3>2. Analisis probabilitas</h3>
+          <div class="scroll"><table><thead><tr><th class="l">Kriteria</th><th>Rata-rata</th><th>Std Dev</th><th>CV</th><th>Prob. final</th></tr></thead><tbody id="r1"></tbody></table></div>
+        </section>
+        <section class="card">
+          <h3>3. Nilai harapan</h3>
+          <div class="scroll"><table><thead><tr><th class="l">Kriteria</th><th>MP</th><th>Prob.</th><th>MP &times; Prob.</th></tr></thead><tbody id="r2"></tbody></table></div>
+        </section>
+      </div>
     </div>
+  </main>
+</div>
+<script src="../apps.js"></script>
+<script src="shell.js"></script>
+<script>
+(function(){
+  var COLORS=['#2dd4bf','#3b82f6','#a78bfa','#f472b6','#fbbf24','#34d399','#f87171','#60a5fa'];
+  function sample(){return {n:6,criteria:[
+    {label:'3-5 kg',mp:4,p:[0.6,0.5,0.7,0.5,0.6,0.7]},
+    {label:'6-8 kg',mp:7,p:[0.2,0.2,0.1,0.3,0.2,0.1]},
+    {label:'9-12 kg',mp:10.5,p:[0.0,0.1,0.0,0.2,0.1,0.1]}]}}
+  var st=sample(), E=Shell.esc;
+  function $(id){return document.getElementById(id)}
+  function fmt(x,d){return isFinite(x)?x.toFixed(d==null?3:d):'-'}
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // --- STATE MANAGEMENT ---
-            let state = {
-                criteria: [
-                    { label: '3-5 kg', mp: 4, probabilities: [0.6, 0.5, 0.7, 0.5, 0.6, 0.7] },
-                    { label: '6-8 kg', mp: 7, probabilities: [0.2, 0.2, 0.1, 0.3, 0.2, 0.1] },
-                    { label: '9-12 kg', mp: 10.5, probabilities: [0.0, 0.1, 0.0, 0.2, 0.1, 0.1] }
-                ],
-                numPanelists: 6
-            };
+  function renderTable(){
+    var h='<tr><th class="l">Kriteria</th><th>Nilai tengah (MP)</th>';
+    for(var i=1;i<=st.n;i++)h+='<th>Panelis '+i+'</th>';
+    $('thead').innerHTML=h+'<th></th></tr>';
+    var b='';
+    st.criteria.forEach(function(c,r){
+      b+='<tr><td class="l"><input type="text" value="'+E(c.label)+'" data-r="'+r+'" data-k="label"></td>'+
+         '<td><input type="number" step="0.1" value="'+c.mp+'" data-r="'+r+'" data-k="mp"></td>';
+      c.p.forEach(function(v,k){b+='<td><input type="number" step="0.01" min="0" max="1" value="'+v+'" data-r="'+r+'" data-c="'+k+'"></td>'});
+      b+='<td><button class="btn small danger" data-del="'+r+'" aria-label="Hapus kriteria">&times;</button></td></tr>';
+    });
+    $('tbody').innerHTML=b;
+    calc();
+  }
 
-            // --- DOM ELEMENTS ---
-            const inputTableHead = document.getElementById('input-table-head');
-            const inputTableBody = document.getElementById('input-table-body');
-            const addRowBtn = document.getElementById('add-row-btn');
-            const addColBtn = document.getElementById('add-col-btn');
-            const removeColBtn = document.getElementById('remove-col-btn');
-            const calculateBtn = document.getElementById('calculate-btn');
-            const errorMessageEl = document.getElementById('error-message');
-            const resultsSection = document.getElementById('results-section');
-            const resultTable1Body = document.getElementById('result-table-1-body');
-            const resultTable2Body = document.getElementById('result-table-2-body');
-            const finalResultEl = document.getElementById('final-result');
+  function calc(){
+    var bad=false,msg='';
+    document.querySelectorAll('#tbody input[data-c]').forEach(function(i){
+      var v=parseFloat(i.value),ok=!isNaN(v)&&v>=0&&v<=1;i.classList.toggle('bad',!ok);if(!ok)bad=true});
+    if(!st.criteria.length){msg='Tambahkan minimal satu kriteria.';bad=true}
+    $('bad').textContent=bad?(msg||'Semua nilai probabilitas harus berupa angka antara 0 dan 1.'):'';
+    if(bad)return;
+    var n=st.n,total=0,res=st.criteria.map(function(c){
+      var sum=c.p.reduce(function(a,v){return a+v},0),avg=sum/n;total+=avg;
+      var vr=n>1?c.p.reduce(function(a,v){return a+Math.pow(v-avg,2)},0)/(n-1):0,sd=Math.sqrt(vr);
+      return {avg:avg,sd:sd,cv:avg>0?sd/avg:0}});
+    res.forEach(function(r){r.fp=total>0?r.avg/total:0});
+    var ev=0;res.forEach(function(r,i){r.mpp=st.criteria[i].mp*r.fp;ev+=r.mpp});
 
-            // --- RENDER FUNCTIONS ---
-            function renderTable() {
-                renderHeader();
-                renderBody();
-            }
+    $('s-final').textContent=fmt(ev);
+    var top=0;res.forEach(function(r,i){if(r.fp>res[top].fp)top=i});
+    $('s-top').textContent=st.criteria[top].label+' ('+fmt(res[top].fp*100,1)+'%)';
+    $('d-top').textContent=fmt(res[top].fp*100,0)+'%';
+    $('s-crit').textContent=st.criteria.length;$('s-pan').textContent=n;
 
-            function renderHeader() {
-                inputTableHead.innerHTML = '';
-                const tr = document.createElement('tr');
-                let headerHTML = `
-                    <th scope="col" class="px-6 py-3 rounded-l-lg">Kriteria</th>
-                    <th scope="col" class="px-3 py-3 text-center">Nilai Tengah (MP)</th>`;
-                for (let i = 1; i <= state.numPanelists; i++) {
-                    headerHTML += `<th scope="col" class="px-6 py-3 text-center">Panelis ${i}</th>`;
-                }
-                headerHTML += `<th scope="col" class="px-6 py-3 rounded-r-lg text-center">Aksi</th>`;
-                tr.innerHTML = headerHTML;
-                inputTableHead.appendChild(tr);
-            }
+    var r1='',r2='';
+    res.forEach(function(r,i){var c=st.criteria[i];
+      r1+='<tr'+(i===top?' class="best"':'')+'><td class="l">'+E(c.label)+'</td><td>'+fmt(r.avg)+'</td><td>'+fmt(r.sd)+'</td><td>'+fmt(r.cv)+'</td><td>'+fmt(r.fp)+'</td></tr>';
+      r2+='<tr><td class="l">'+E(c.label)+'</td><td>'+c.mp+'</td><td>'+fmt(r.fp)+'</td><td>'+fmt(r.mpp)+'</td></tr>'});
+    r2+='<tr class="best"><td class="l">Total</td><td></td><td></td><td>'+fmt(ev)+'</td></tr>';
+    $('r1').innerHTML=r1;$('r2').innerHTML=r2;
 
-            function renderBody() {
-                inputTableBody.innerHTML = '';
-                state.criteria.forEach((criterion, rowIndex) => {
-                    const tr = document.createElement('tr');
-                    tr.className = 'bg-white border-b';
-                    
-                    // Kriteria & MP inputs
-                    let rowHTML = `
-                        <td class="px-2 py-2"><input type="text" class="w-full p-2 bg-gray-50 border border-gray-300 rounded-lg" value="${criterion.label}" data-row="${rowIndex}" data-type="label"></td>
-                        <td class="px-2 py-2"><input type="number" step="0.1" class="w-20 p-2 text-center bg-gray-50 border border-gray-300 rounded-lg" value="${criterion.mp}" data-row="${rowIndex}" data-type="mp"></td>
-                    `;
+    // donut
+    var C=2*Math.PI*62,off=0,svg='<circle cx="85" cy="85" r="62" fill="none" stroke="#181822" stroke-width="22"/>',lg='';
+    res.forEach(function(r,i){var len=r.fp*C,col=COLORS[i%COLORS.length];
+      svg+='<circle cx="85" cy="85" r="62" fill="none" stroke="'+col+'" stroke-width="22" stroke-dasharray="'+len+' '+(C-len)+'" stroke-dashoffset="'+(-off)+'"/>';
+      off+=len;
+      lg+='<li><i style="background:'+col+'"></i>'+E(st.criteria[i].label)+'<span>'+fmt(r.fp*100,1)+'%</span></li>'});
+    $('donut').innerHTML=svg;$('legend').innerHTML=lg;
+  }
 
-                    // Panelist probability inputs
-                    criterion.probabilities.forEach((prob, colIndex) => {
-                        rowHTML += `<td class="px-2 py-2"><input type="number" step="0.01" min="0" max="1" class="w-full p-2 text-center bg-gray-50 border border-gray-300 rounded-lg" value="${prob}" data-row="${rowIndex}" data-col="${colIndex}"></td>`;
-                    });
-
-                    // Action button
-                    rowHTML += `<td class="px-6 py-4 text-center"><button class="danger-button" data-row="${rowIndex}">Hapus</button></td>`;
-
-                    tr.innerHTML = rowHTML;
-                    inputTableBody.appendChild(tr);
-                });
-            }
-            
-            // --- EVENT HANDLERS & STATE UPDATERS ---
-            addRowBtn.addEventListener('click', () => {
-                const newProbs = Array(state.numPanelists).fill(0);
-                state.criteria.push({ label: 'Kriteria Baru', mp: 0, probabilities: newProbs });
-                renderTable();
-            });
-            
-            addColBtn.addEventListener('click', () => {
-                state.numPanelists++;
-                state.criteria.forEach(c => c.probabilities.push(0));
-                renderTable();
-            });
-
-            removeColBtn.addEventListener('click', () => {
-                if (state.numPanelists > 1) {
-                    state.numPanelists--;
-                    state.criteria.forEach(c => c.probabilities.pop());
-                    renderTable();
-                }
-            });
-
-            inputTableBody.addEventListener('click', (e) => {
-                if (e.target.classList.contains('danger-button')) {
-                    const rowIndex = parseInt(e.target.dataset.row);
-                    state.criteria.splice(rowIndex, 1);
-                    renderTable();
-                }
-            });
-
-            inputTableBody.addEventListener('change', (e) => {
-                const target = e.target;
-                const rowIndex = parseInt(target.dataset.row);
-                if (target.dataset.type === 'label') {
-                    state.criteria[rowIndex].label = target.value;
-                } else if (target.dataset.type === 'mp') {
-                    state.criteria[rowIndex].mp = parseFloat(target.value) || 0;
-                } else {
-                    const colIndex = parseInt(target.dataset.col);
-                    state.criteria[rowIndex].probabilities[colIndex] = parseFloat(target.value) || 0;
-                }
-            });
-
-
-            // --- CALCULATION LOGIC ---
-            calculateBtn.addEventListener('click', () => {
-                errorMessageEl.textContent = '';
-                let isValid = true;
-                
-                // Validate inputs
-                for (const criterion of state.criteria) {
-                    for (const prob of criterion.probabilities) {
-                        if (isNaN(prob) || prob < 0 || prob > 1) {
-                            isValid = false;
-                            break;
-                        }
-                    }
-                    if (!isValid) break;
-                }
-
-                if (!isValid) {
-                    errorMessageEl.textContent = 'Pastikan semua input probabilitas adalah angka antara 0 dan 1.';
-                    resultsSection.classList.add('hidden');
-                    return;
-                }
-
-                // Calculations
-                const analysisResults = [];
-                let totalAverage = 0;
-
-                state.criteria.forEach(criterion => {
-                    const row = criterion.probabilities;
-                    const sum = row.reduce((acc, val) => acc + val, 0);
-                    const average = sum / state.numPanelists;
-                    totalAverage += average;
-
-                    const squaredDiffs = row.map(val => Math.pow(val - average, 2));
-                    const variance = state.numPanelists > 1 ? squaredDiffs.reduce((acc, val) => acc + val, 0) / (state.numPanelists - 1) : 0;
-                    const stdDev = Math.sqrt(variance);
-                    const cv = average > 0 ? stdDev / average : 0;
-                    analysisResults.push({ average, stdDev, cv });
-                });
-
-                analysisResults.forEach(result => {
-                    result.finalProb = totalAverage > 0 ? result.average / totalAverage : 0;
-                });
-
-                const expectedValueResults = [];
-                let totalExpectedValue = 0;
-
-                analysisResults.forEach((result, index) => {
-                    const mp = state.criteria[index].mp;
-                    const prob = result.finalProb;
-                    const mpXProb = mp * prob;
-                    totalExpectedValue += mpXProb;
-                    expectedValueResults.push({ mp, prob, mpXProb });
-                });
-
-                renderResults(analysisResults, expectedValueResults, totalExpectedValue);
-            });
-
-            // --- RENDER RESULTS ---
-            function renderResults(analysis, expectedValues, finalValue) {
-                resultTable1Body.innerHTML = '';
-                resultTable2Body.innerHTML = '';
-
-                analysis.forEach((result, index) => {
-                    resultTable1Body.innerHTML += `
-                        <tr class="bg-white border-b">
-                            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">${state.criteria[index].label}</th>
-                            <td class="px-6 py-4 text-center">${result.average.toFixed(3)}</td>
-                            <td class="px-6 py-4 text-center">${result.stdDev.toFixed(3)}</td>
-                            <td class="px-6 py-4 text-center">${result.cv.toFixed(3)}</td>
-                            <td class="px-6 py-4 text-center font-semibold">${result.finalProb.toFixed(3)}</td>
-                        </tr>`;
-                });
-
-                expectedValues.forEach((result, index) => {
-                    resultTable2Body.innerHTML += `
-                        <tr class="bg-white border-b">
-                            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">${state.criteria[index].label}</th>
-                            <td class="px-6 py-4 text-center">${result.mp}</td>
-                            <td class="px-6 py-4 text-center">${result.prob.toFixed(3)}</td>
-                            <td class="px-6 py-4 text-center font-semibold">${result.mpXProb.toFixed(3)}</td>
-                        </tr>`;
-                });
-                
-                finalResultEl.textContent = `${finalValue.toFixed(3)}`;
-                resultsSection.classList.remove('hidden');
-            }
-
-            // --- INITIAL RENDER ---
-            renderTable();
-        });
-    </script>
+  $('add-row').onclick=function(){st.criteria.push({label:'Kriteria baru',mp:0,p:Array(st.n).fill(0)});renderTable()};
+  $('add-col').onclick=function(){st.n++;st.criteria.forEach(function(c){c.p.push(0)});renderTable()};
+  $('rm-col').onclick=function(){if(st.n>1){st.n--;st.criteria.forEach(function(c){c.p.pop()});renderTable()}else Shell.toast('Minimal satu panelis.',true)};
+  $('reset').onclick=function(){st=sample();renderTable();Shell.toast('Contoh dikembalikan.')};
+  $('tbody').addEventListener('click',function(e){var d=e.target.closest('[data-del]');
+    if(d){st.criteria.splice(+d.dataset.del,1);renderTable()}});
+  $('tbody').addEventListener('input',function(e){var t=e.target,r=+t.dataset.r,c=st.criteria[r];if(!c)return;
+    if(t.dataset.k==='label')c.label=t.value;
+    else if(t.dataset.k==='mp')c.mp=parseFloat(t.value)||0;
+    else c.p[+t.dataset.c]=t.value===''?NaN:parseFloat(t.value);
+    calc()});
+  renderTable();
+})();
+</script>
 </body>
 </html>
-
